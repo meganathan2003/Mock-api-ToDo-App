@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <h1>Welcome to the TODO - APP</h1>
+
+
+    <!-- below the code for create the input tag -->
+
+    <form onsubmit="addTask()">
+        <div>
+            <label for="">Enter your Title</label>
+            <input type="text" name="title" id="title" placeholder="Enter your title" required autofocus />
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+    <table border="1" width="100%">
+        <thead>
+            <tr>
+                <th>SNO</th>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tbody-tbl">
+
+        </tbody>
+    </table>
+    <script>
+
+        function addTask() {
+            event.preventDefault(); // we use it for dont reload the page 
+            let title = document.getElementById("title").value;
+            alert("Task Added Successfully");
+            saveTask(title);
+            showTask();
+            window.location.reload();
+
+        }
+
+        function saveTask(title) {
+            let tasks = [];
+            if (localStorage.getItem("tasks")) {
+                tasks = JSON.parse(localStorage.getItem("tasks"))
+            }
+            else {
+                tasks = [];
+            }
+
+            let id = tasks.length + 1;
+            let taskObj = { "id": id, "title": title, "status": "PENDING" };
+            tasks.push(taskObj);
+            localStorage.setItem("tasks", JSON.stringify(tasks));
+
+        }
+
+        function showTask() {
+
+            let tasks = [];
+            if (localStorage.getItem("tasks")) {
+                tasks = JSON.parse(localStorage.getItem("tasks"))
+            }
+            else {
+                tasks = [];
+            }
+
+            let i = 0;
+            let content = "";
+            for (let task of tasks) {
+                i++;
+                let btn = `<button style="cursor:pointer"; type="button" onclick='updateTask(${task.id})'>Mark as Completed</button>`;
+                if (task.status == "COMPLETED") {
+                    btn = "";
+                }
+                content += `<tr><td>${i}</td><td>${task.title}</td><td>${task.status}</td><td>${btn}</td></tr>`;
+
+            }
+            document.querySelector("#tbody-tbl").innerHTML = content;
+
+
+        }
+
+        showTask();
+        function updateTask(id) {
+            alert("Update Task" + id);
+            let tasks = [];
+            if (localStorage.getItem("tasks")) {
+                tasks = JSON.parse(localStorage.getItem("tasks"));
+            } else {
+                tasks = [];
+            }
+
+            let index = tasks.findIndex(obj => obj.id == id);
+            if (index == -1) {
+                alert("No data matched for this id:" + id);
+            } else {
+
+                tasks[index].status = "COMPLETED";
+                // tasks[index].completedDate = new Date().toJSON().substring(0, 10);
+                localStorage.setItem("tasks", JSON.stringify(tasks));
+            }
+            location.reload();
+        }
+
+    </script>
+</body>
+
+</html>
